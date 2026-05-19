@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday, Satopon</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500;1,600;1,700;1,800&family=Allura&family=Great+Vibes&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Background -->
+    <div class="background"></div>
+    
+    <!-- Floating decorative elements -->
+    <div class="floating-petals"></div>
+    
+    <!-- Main container -->
+    <div class="container">
+        
+        <!-- Greeting Section -->
+        <section class="greeting-section fade-in">
+            <div class="greeting-card">
+                <h1 class="greeting-text">Happy birthday, Satopon.</h1>
+                <p class="greeting-subtext">We love you.</p>
+                <div class="decorative-divider">❀</div>
+            </div>
+        </section>
+
+        <!-- Interactive Cake Section -->
+        <section class="cake-section fade-in-delayed">
+            <div class="cake-container">
+                <h2 class="cake-title">Make a wish...</h2>
+                <canvas id="cakeCanvas" width="400" height="500"></canvas>
+                <p class="cake-instruction">Tap each candle to blow it out</p>
+                <button class="reset-button" id="resetButton">Reset Candles</button>
+            </div>
+        </section>
+
+        <!-- Recipe Cards Section -->
+        <section class="recipes-section fade-in-delayed-more">
+            <h2 class="recipes-title">Recipes for a Beautiful Life</h2>
+            
+            <div class="recipes-container">
+                
+                <!-- Recipe Card 1 -->
+                <div class="recipe-card">
+                    <div class="recipe-header">
+                        <h3 class="recipe-title">Recipe to Be the Best Mom</h3>
+                        <div class="floral-corner top-left">🌹</div>
+                    </div>
+                    <div class="recipe-content">
+                        <div class="recipe-placeholder">
+                            <p><em>Your content goes here...</em></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recipe Card 2 -->
+                <div class="recipe-card">
+                    <div class="recipe-header">
+                        <h3 class="recipe-title">How to Make Satoko Happy</h3>
+                        <div class="floral-corner top-left">🌿</div>
+                    </div>
+                    <div class="recipe-content">
+                        <div class="recipe-placeholder">
+                            <p><em>Your content goes here...</em></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recipe Card 3 -->
+                <div class="recipe-card">
+                    <div class="recipe-header">
+                        <h3 class="recipe-title">Anne Shirley's Raspberry Layer Cake</h3>
+                        <div class="floral-corner top-left">🌸</div>
+                    </div>
+                    <div class="recipe-content">
+                        <div class="recipe-placeholder">
+                            <p><em>Your content goes here...</em></p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>Made with love and fond memories</p>
+        </footer>
+
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
