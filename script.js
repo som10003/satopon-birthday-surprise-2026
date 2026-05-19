@@ -1,56 +1,99 @@
 // =====================
-// INTERACTIVE CAKE WITH CANDLES
+// INTERACTIVE BIRTHDAY CAKE WITH 6 CANDLES
 // =====================
 
 const canvas = document.getElementById('cakeCanvas');
 const ctx = canvas.getContext('2d');
 const resetButton = document.getElementById('resetButton');
 
-// Canvas dimensions
-const cakeWidth = 300;
-const cakeHeight = 280;
-const cakeX = (canvas.width - cakeWidth) / 2;
-const cakeY = canvas.height - cakeHeight - 50;
+// Canvas setup
+const canvasWidth = canvas.width;
+const canvasHeight = canvas.height;
 
 // Color palette
 const colors = {
-    cakeBrown: '#8B6F47',
-    frosting: '#F5E6D3',
-    frostingLight: '#FEFAF3',
-    frosting2: '#E8D4C0',
-    candleWax: '#FFE5B4',
-    candleFlame: '#FF6B35',
+    background: '#FDF8F2',
+    creamFrosting: '#F6F1E7',
+    softBlush: '#EBCFC4',
+    dustyRose: '#D8A7A7',
+    sageGreen: '#A8B59A',
+    candleWax: '#FFF8DC',
     flameOuter: '#FFA500',
-    plate: '#D4C5B9',
-    shadow: 'rgba(122, 92, 77, 0.2)',
+    candleFlame: '#FF6B35',
+    cakeSponge: '#D9B99B',
+    plate: '#E8DDD0',
+    shadow: 'rgba(122, 92, 77, 0.15)',
 };
 
-// Candle properties
+// Cake dimensions (centered, thick and celebratory)
+const cakeX = canvasWidth / 2;
+const cakeY = canvasHeight * 0.55;
+const cakeWidth = 280;
+const cakeHeight = 180;
+
+// Candle setup
 const candleCount = 6;
 let candles = [];
 let allBlown = false;
+let celebrationTriggered = false;
 
-class Candle {
-    constructor(x, y, index) {
+// Petal animation
+let petals = [];
+
+class Petal {
+    constructor(x, y) {
         this.x = x;
         this.y = y;
+        this.vx = (Math.random() - 0.5) * 1.5;
+        this.vy = Math.random() * -2 - 1;
+        this.life = 1;
+        this.size = Math.random() * 4 + 2;
+        this.rotation = Math.random() * Math.PI * 2;
+    }
+
+    update() {
+        this.x += this.vx;
+        this.y += this.vy;
+        this.vy -= 0.1; // gravity
+        this.life -= 0.01;
+    }
+
+    draw() {
+        ctx.save();
+        ctx.globalAlpha = this.life * 0.6;
+        ctx.fillStyle = colors.dustyRose;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+    }
+}
+
+class Candle {
+    constructor(index) {
+        // 6 candles evenly spaced across top of cake
+        const spacing = cakeWidth * 0.65;
+        const startX = cakeX - (spacing / 2);
+        
+        this.x = startX + (index * spacing / (candleCount - 1));
+        this.y = cakeY - cakeHeight / 2 - 20;
         this.index = index;
         this.lit = true;
-        this.blowProgress = 0; // 0 = not blown, 1 = fully blown
-        this.width = 8;
-        this.height = 45;
-        this.flameHeight = 18;
-        this.flameWidth = 6;
+        this.blowProgress = 0;
+        this.candleWidth = 6;
+        this.candleHeight = 40;
+        this.flameHeight = 20;
+        this.flameWidth = 8;
     }
 
     isHit(mx, my) {
-        // Check if click is within candle and flame area
-        const flameTop = this.y - this.height - this.flameHeight;
+        // Generous hit area for candle and flame
+        const flameTop = this.y - this.candleHeight - this.flameHeight;
         return (
-            mx >= this.x - 15 &&
-            mx <= this.x + 15 &&
-            my >= flameTop - 10 &&
-            my <= this.y - this.height + 10
+            mx >= this.x - 20 &&
+            mx <= this.x + 20 &&
+            my >= flameTop - 15 &&
+            my <= this.y - this.candleHeight + 15
         );
     }
 
@@ -59,23 +102,22 @@ class Candle {
             this.blowProgress = Math.min(this.blowProgress + 0.15, 1);
             if (this.blowProgress >= 1) {
                 this.lit = false;
+                // Create petal burst
+                for (let i = 0; i < 8; i++) {
+                    petals.push(new Petal(this.x, this.y - this.candleHeight - 10));
+                }
             }
         }
     }
 
     draw() {
-        // Draw candle wax
+        // Draw candle wax (cream colored)
         ctx.fillStyle = colors.candleWax;
-        ctx.beginPath();
-        ctx.ellipse(this.x, this.y - this.height, this.width / 2 + 1, 3, 0, 0, Math.PI * 2);
-        ctx.fill();
-
-        ctx.fillStyle = colors.candleWax;
-        ctx.fillRect(this.x - this.width / 2, this.y - this.height, this.width, this.height);
+        ctx.fillRect(this.x - this.candleWidth / 2, this.y - this.candleHeight, this.candleWidth, this.candleHeight);
 
         // Draw candle highlight
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
-        ctx.fillRect(this.x - this.width / 2 + 2, this.y - this.height, 2, this.height);
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+        ctx.fillRect(this.x - this.candleWidth / 2 + 1, this.y - this.candleHeight, 2, this.candleHeight);
 
         // Draw flame only if lit
         if (this.lit) {
@@ -84,53 +126,30 @@ class Candle {
     }
 
     drawFlame() {
-        const wobble = Math.sin(Date.now() / 100 + this.index) * 2;
+        const wobble = Math.sin(Date.now() / 120 + this.index * 0.5) * 2;
         const flameX = this.x + wobble;
-        const flameTop = this.y - this.height - this.flameHeight;
+        const flameTop = this.y - this.candleHeight - this.flameHeight;
+        const flicker = Math.sin(Date.now() / 80 + this.index) * 0.3 + 0.7;
 
         // Outer flame (orange)
         ctx.fillStyle = colors.flameOuter;
-        ctx.globalAlpha = 0.7 * (1 - this.blowProgress * 0.5);
+        ctx.globalAlpha = 0.6 * flicker * (1 - this.blowProgress * 0.3);
         ctx.beginPath();
-        ctx.ellipse(
-            flameX,
-            flameTop + 8,
-            this.flameWidth + 3,
-            this.flameHeight * 0.8,
-            0,
-            0,
-            Math.PI * 2
-        );
+        ctx.ellipse(flameX, flameTop + 8, this.flameWidth + 2, this.flameHeight * 0.7, 0, 0, Math.PI * 2);
         ctx.fill();
 
         // Inner flame (bright red-orange)
         ctx.fillStyle = colors.candleFlame;
-        ctx.globalAlpha = 0.9 * (1 - this.blowProgress * 0.5);
+        ctx.globalAlpha = 0.9 * flicker * (1 - this.blowProgress * 0.3);
         ctx.beginPath();
-        ctx.ellipse(
-            flameX,
-            flameTop + 5,
-            this.flameWidth,
-            this.flameHeight * 0.6,
-            0,
-            0,
-            Math.PI * 2
-        );
+        ctx.ellipse(flameX, flameTop + 5, this.flameWidth - 1, this.flameHeight * 0.5, 0, 0, Math.PI * 2);
         ctx.fill();
 
         // Flame glow
-        ctx.fillStyle = 'rgba(255, 107, 53, 0.3)';
-        ctx.globalAlpha = 0.5;
+        ctx.fillStyle = 'rgba(255, 107, 53, 0.25)';
+        ctx.globalAlpha = 0.4 * (1 - this.blowProgress * 0.3);
         ctx.beginPath();
-        ctx.ellipse(
-            flameX,
-            flameTop,
-            this.flameWidth + 8,
-            this.flameHeight + 5,
-            0,
-            0,
-            Math.PI * 2
-        );
+        ctx.ellipse(flameX, flameTop, this.flameWidth + 10, this.flameHeight + 8, 0, 0, Math.PI * 2);
         ctx.fill();
 
         ctx.globalAlpha = 1;
@@ -141,63 +160,81 @@ class Candle {
 function initializeCandles() {
     candles = [];
     allBlown = false;
+    celebrationTriggered = false;
+    petals = [];
 
-    // Calculate positions in an arc across the top of the cake
     for (let i = 0; i < candleCount; i++) {
-        const angle = (Math.PI / (candleCount - 1)) * i - Math.PI / 2;
-        const radius = cakeWidth * 0.35;
-        const x = cakeX + cakeWidth / 2 + Math.cos(angle) * radius;
-        const y = cakeY + 30;
-
-        candles.push(new Candle(x, y, i));
+        candles.push(new Candle(i));
     }
 }
 
-// Draw cake
+// Draw the thick layered cake
 function drawCake() {
-    // Plate
+    // Plate/base
     ctx.fillStyle = colors.plate;
-    ctx.fillRect(cakeX - 30, cakeY + cakeHeight - 10, cakeWidth + 60, 15);
-    ctx.fillStyle = 'rgba(122, 92, 77, 0.1)';
-    ctx.fillRect(cakeX - 30, cakeY + cakeHeight - 10, cakeWidth + 60, 3);
-
-    // Main cake layers
-    // Bottom layer (darker)
-    ctx.fillStyle = colors.cakeBrown;
-    ctx.fillRect(cakeX, cakeY + cakeHeight - 100, cakeWidth, 100);
-
-    // Top layer (lighter)
-    ctx.fillStyle = colors.frosting;
     ctx.beginPath();
-    ctx.ellipse(cakeX + cakeWidth / 2, cakeY + 50, cakeWidth / 2, 50, 0, 0, Math.PI * 2);
+    ctx.ellipse(cakeX, cakeY + cakeHeight / 2 + 15, cakeWidth / 2 + 50, 12, 0, 0, Math.PI * 2);
     ctx.fill();
 
-    // Frosting detail
-    ctx.fillStyle = colors.frostingLight;
+    // Soft shadow
+    ctx.fillStyle = colors.shadow;
     ctx.beginPath();
-    ctx.ellipse(cakeX + cakeWidth / 2, cakeY + 40, cakeWidth / 2 - 10, 35, 0, 0, Math.PI * 2);
+    ctx.ellipse(cakeX, cakeY + cakeHeight / 2 + 18, cakeWidth / 2 + 40, 8, 0, 0, Math.PI * 2);
     ctx.fill();
 
-    // Frosting swirls/texture
-    ctx.strokeStyle = colors.frosting2;
-    ctx.lineWidth = 2;
+    // Bottom sponge layer (darker, visible cake)
+    ctx.fillStyle = colors.cakeSponge;
+    ctx.beginPath();
+    ctx.ellipse(cakeX, cakeY + cakeHeight * 0.25, cakeWidth / 2, cakeHeight * 0.35, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Middle sponge layer
+    ctx.fillStyle = colors.cakeSponge;
+    ctx.beginPath();
+    ctx.ellipse(cakeX, cakeY - cakeHeight * 0.1, cakeWidth / 2 - 20, cakeHeight * 0.3, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Top frosting layer (main visible part)
+    ctx.fillStyle = colors.creamFrosting;
+    ctx.beginPath();
+    ctx.ellipse(cakeX, cakeY - cakeHeight * 0.3, cakeWidth / 2 - 30, cakeHeight * 0.25, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Frosting highlight (lighter cream)
+    ctx.fillStyle = colors.softBlush;
     ctx.globalAlpha = 0.5;
-    for (let i = 0; i < 5; i++) {
+    ctx.beginPath();
+    ctx.ellipse(cakeX - 40, cakeY - cakeHeight * 0.35, cakeWidth / 2 - 60, cakeHeight * 0.2, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.globalAlpha = 1;
+
+    // Soft floral piping accents (very subtle)
+    ctx.strokeStyle = colors.dustyRose;
+    ctx.lineWidth = 1.5;
+    ctx.globalAlpha = 0.4;
+
+    // Decorative gentle swirls
+    for (let i = 0; i < 3; i++) {
         ctx.beginPath();
         ctx.arc(
-            cakeX + cakeWidth / 2 - 80 + i * 40,
-            cakeY + 50 + Math.sin(i) * 10,
-            15,
+            cakeX - 50 + i * 50,
+            cakeY - cakeHeight * 0.2,
+            12,
             0,
             Math.PI * 2
         );
         ctx.stroke();
     }
+
     ctx.globalAlpha = 1;
 
-    // Cake shadow
-    ctx.fillStyle = colors.shadow;
-    ctx.fillRect(cakeX - 15, cakeY + cakeHeight - 5, cakeWidth + 30, 8);
+    // Optional delicate "60" text on cake front
+    ctx.fillStyle = colors.dustyRose;
+    ctx.globalAlpha = 0.4;
+    ctx.font = 'italic 24px "EB Garamond", serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('60', cakeX, cakeY + cakeHeight * 0.15);
+    ctx.globalAlpha = 1;
 }
 
 // Draw all candles
@@ -205,11 +242,66 @@ function drawCandles() {
     candles.forEach((candle) => candle.draw());
 }
 
+// Draw petals
+function drawPetals() {
+    petals = petals.filter(p => p.life > 0);
+    petals.forEach(p => {
+        p.update();
+        p.draw();
+    });
+}
+
+// Show celebration message
+function showCelebration() {
+    if (celebrationTriggered) return;
+    celebrationTriggered = true;
+
+    const celebration = document.createElement('div');
+    celebration.style.cssText = `
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: linear-gradient(135deg, #F6F1E7 0%, #FDF8F2 100%);
+        border: 2px solid #7E8F74;
+        border-radius: 20px;
+        padding: 50px 70px;
+        text-align: center;
+        z-index: 1000;
+        box-shadow: 0 20px 60px rgba(122, 92, 77, 0.25);
+        animation: popIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+    `;
+
+    celebration.innerHTML = `
+        <p style="
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.2em;
+            color: #7A5C4D;
+            margin: 0 0 15px 0;
+            letter-spacing: 0.5px;
+        ">May all your wishes bloom beautifully.</p>
+        <p style="
+            font-family: 'Great Vibes', cursive;
+            font-size: 1.6em;
+            color: #D8A7A7;
+            margin: 0;
+        ">✨ Happy 60th Birthday, Satopon! ✨</p>
+    `;
+
+    document.body.appendChild(celebration);
+
+    // Remove after 4 seconds
+    setTimeout(() => {
+        celebration.style.animation = 'fadeOut 0.8s ease-out forwards';
+        setTimeout(() => celebration.remove(), 800);
+    }, 4000);
+}
+
 // Main draw function
 function draw() {
     // Clear canvas
-    ctx.fillStyle = 'transparent';
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = colors.background;
+    ctx.fillRect(0, 0, canvasWidth, canvasHeight);
 
     // Draw cake
     drawCake();
@@ -217,11 +309,18 @@ function draw() {
     // Draw candles
     drawCandles();
 
+    // Draw petals
+    drawPetals();
+
     // Check if all candles are blown
     const allBlownNow = candles.every((c) => !c.lit);
     if (allBlownNow && !allBlown) {
         allBlown = true;
-        showCelebration();
+        // Create celebration petals
+        for (let i = 0; i < 30; i++) {
+            petals.push(new Petal(cakeX + (Math.random() - 0.5) * 100, cakeY - 100));
+        }
+        setTimeout(showCelebration, 500);
     }
 
     // Continue animation
@@ -237,7 +336,6 @@ function handleCanvasClick(event) {
     const x = (event.clientX - rect.left) * scaleX;
     const y = (event.clientY - rect.top) * scaleY;
 
-    // Check which candle was clicked
     candles.forEach((candle) => {
         if (candle.isHit(x, y)) {
             candle.blow();
@@ -264,53 +362,9 @@ function handleCanvasTouch(event) {
     }
 }
 
-// Show celebration message
-function showCelebration() {
-    const celebration = document.createElement('div');
-    celebration.style.cssText = `
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        background: linear-gradient(135deg, #F6F1E7 0%, #FDF8F2 100%);
-        border: 2px solid #7E8F74;
-        border-radius: 20px;
-        padding: 40px 60px;
-        text-align: center;
-        z-index: 1000;
-        box-shadow: 0 20px 60px rgba(122, 92, 77, 0.25);
-        animation: popIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
-    `;
-
-    celebration.innerHTML = `
-        <p style="
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 2.2em;
-            color: #7A5C4D;
-            margin: 0;
-            letter-spacing: 0.5px;
-        ">✨ Make a wish! ✨</p>
-        <p style="
-            font-family: 'Great Vibes', cursive;
-            font-size: 1.5em;
-            color: #D8A7A7;
-            margin: 15px 0 0 0;
-        ">Happy Birthday! 🎂</p>
-    `;
-
-    document.body.appendChild(celebration);
-
-    // Remove after 3 seconds
-    setTimeout(() => {
-        celebration.style.animation = 'fadeOut 0.6s ease-out forwards';
-        setTimeout(() => celebration.remove(), 600);
-    }, 3000);
-}
-
 // Reset button functionality
 resetButton.addEventListener('click', () => {
     initializeCandles();
-    allBlown = false;
 });
 
 // Canvas event listeners
