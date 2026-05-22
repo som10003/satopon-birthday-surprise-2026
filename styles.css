@@ -1,5 +1,5 @@
 /* =====================
-   COLOR PALETTE
+   COLOR PALETTE & CORE
    ===================== */
 :root {
     --sage-green: #A8B59A;
@@ -9,40 +9,30 @@
     --dusty-rose: #D8A7A7;
     --soft-blush: #EBCFC4;
     --lavender-grey: #B8B0C9;
-    --hydrangea-blue: #AAB7C4;
     --antique-brown: #7A5C4D;
     --faded-gold: #C8B68A;
 }
 
-/* =====================
-   GLOBAL STYLES
-   ===================== */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-html, body {
-    width: 100%;
-    height: 100%;
+body {
+    width: 100vw;
+    height: 100vh;
     font-family: 'EB Garamond', serif;
     color: var(--antique-brown);
     background-color: var(--warm-ivory);
-    overflow-x: hidden;
-}
-
-body {
+    overflow: hidden; /* Lock viewport scrolling completely */
     position: relative;
     background-image: 
         linear-gradient(135deg, rgba(168, 181, 154, 0.03) 0%, rgba(184, 176, 201, 0.03) 100%),
         url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200"><defs><pattern id="dots" x="0" y="0" width="50" height="50" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="rgba(122, 92, 77, 0.05)"/></pattern></defs><rect width="200" height="200" fill="url(%23dots)"/></svg>');
-    background-attachment: fixed;
 }
 
-/* =====================
-   BACKGROUND & TEXTURES
-   ===================== */
+/* Background graphics layer */
 .background {
     position: fixed;
     top: 0;
@@ -51,21 +41,6 @@ body {
     height: 100%;
     background: linear-gradient(180deg, rgba(246, 241, 231, 0.9) 0%, rgba(235, 207, 196, 0.1) 100%);
     z-index: -2;
-    pointer-events: none;
-}
-
-/* =====================
-   FLOATING PETALS ANIMATION
-   ===================== */
-.floating-petals {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: -1;
-    pointer-events: none;
-    overflow: hidden;
 }
 
 .floating-petals::before,
@@ -77,433 +52,223 @@ body {
     background-image: 
         radial-gradient(2px 2px at 20% 30%, rgba(216, 167, 167, 0.1)),
         radial-gradient(2px 2px at 60% 70%, rgba(184, 176, 201, 0.08)),
-        radial-gradient(1.5px 1.5px at 50% 50%, rgba(168, 181, 154, 0.1)),
-        radial-gradient(1px 1px at 80% 10%, rgba(200, 182, 138, 0.07));
-    background-repeat: repeat;
-    background-size: 200px 200px, 300px 300px, 250px 250px, 350px 350px;
-    animation: drift 20s linear infinite;
+        radial-gradient(1.5px 1.5px at 50% 50%, rgba(168, 181, 154, 0.1));
+    background-size: 200px 200px, 300px 300px, 250px 250px;
+    animation: drift 25s linear infinite;
+    z-index: -1;
 }
-
-.floating-petals::after {
-    animation: drift 30s linear infinite reverse;
-    opacity: 0.5;
-}
-
 @keyframes drift {
     0% { transform: translateY(-100%); }
     100% { transform: translateY(100%); }
 }
 
 /* =====================
-   CONTAINER & SECTIONS
+   3D BOOK FRAMEWORK
    ===================== */
-.container {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 60px 30px;
-    position: relative;
-    z-index: 1;
-}
-
-section {
-    margin-bottom: 80px;
-}
-
-/* =====================
-   ANIMATIONS
-   ===================== */
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(30px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-@keyframes fadeInDelayed {
-    from {
-        opacity: 0;
-        transform: translateY(30px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-@keyframes fadeInDelayedMore {
-    from {
-        opacity: 0;
-        transform: translateY(30px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.fade-in {
-    animation: fadeIn 1s ease-out forwards;
-}
-
-.fade-in-delayed {
-    animation: fadeInDelayed 1s ease-out 0.5s forwards;
-    opacity: 0;
-}
-
-.fade-in-delayed-more {
-    animation: fadeInDelayedMore 1s ease-out 1s forwards;
-    opacity: 0;
-}
-
-/* =====================
-   GREETING SECTION
-   ===================== */
-.greeting-section {
+.book-container {
+    width: 100%;
+    height: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 300px;
-    margin-bottom: 100px;
+    padding: 20px;
+    perspective: 2000px; /* 3D Depth Field strength */
 }
 
-.greeting-card {
+.book {
+    position: relative;
+    width: 100%;
+    max-width: 440px; /* Perfect Portrait book dimensions */
+    height: 90vh;
+    max-height: 720px;
+    transform-style: preserve-3d;
+}
+
+/* Global single-page card architecture */
+.page {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
     background: linear-gradient(135deg, var(--cream) 0%, var(--warm-ivory) 100%);
     border: 2px solid var(--sage-green);
-    border-radius: 20px;
-    padding: 60px 50px;
-    text-align: center;
-    box-shadow: 0 10px 30px rgba(122, 92, 77, 0.08);
-    max-width: 600px;
-    position: relative;
-    overflow: hidden;
-}
-
-.greeting-card::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    right: -50%;
-    width: 300px;
-    height: 300px;
-    background: radial-gradient(circle, rgba(216, 167, 167, 0.1) 0%, transparent 70%);
-    border-radius: 50%;
+    border-radius: 12px;
+    box-shadow: 0 12px 35px rgba(122, 92, 77, 0.12);
+    padding: 25px 20px 70px 20px; /* Padding accommodates spatial footer controls */
+    
+    transform-origin: left center; /* Hinged Spine Alignment */
+    transform-style: preserve-3d;
+    transition: transform 0.8s cubic-bezier(0.45, 0, 0.55, 1), opacity 0.4s ease;
+    backface-visibility: hidden; /* Keeps back face hidden until active */
+    opacity: 0;
     pointer-events: none;
 }
 
-.greeting-card::after {
-    content: '';
-    position: absolute;
-    bottom: -50%;
-    left: -50%;
-    width: 250px;
-    height: 250px;
-    background: radial-gradient(circle, rgba(168, 181, 154, 0.1) 0%, transparent 70%);
-    border-radius: 50%;
+/* Active and flipped stage state machines */
+.page.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.page.flipped {
+    transform: rotateY(-180deg);
+    opacity: 0;
     pointer-events: none;
 }
 
-.greeting-text {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 3.5em;
-    font-weight: 400;
-    color: var(--antique-brown);
-    margin-bottom: 15px;
-    letter-spacing: 1px;
-    position: relative;
-    z-index: 1;
-}
-
-.greeting-subtext {
-    font-family: 'Great Vibes', cursive;
-    font-size: 2em;
-    color: var(--dusty-rose);
-    font-weight: 400;
-    position: relative;
-    z-index: 1;
-}
-
-.decorative-divider {
-    font-size: 1.5em;
-    color: var(--faded-gold);
-    margin-top: 20px;
-    position: relative;
-    z-index: 1;
-}
-
-/* =====================
-   CAKE SECTION
-   ===================== */
-.cake-section {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 100px;
-}
-
-.cake-container {
-    background: linear-gradient(135deg, var(--cream) 0%, var(--warm-ivory) 100%);
-    border: 2px solid var(--moss-green);
-    border-radius: 20px;
-    padding: 50px 40px;
-    text-align: center;
-    box-shadow: 0 15px 40px rgba(122, 92, 77, 0.1);
-    max-width: 500px;
-}
-
-.cake-title {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 2.2em;
-    color: var(--antique-brown);
-    margin-bottom: 30px;
-    font-weight: 400;
-    letter-spacing: 0.5px;
-}
-
-#cakeCanvas {
-    display: block;
-    margin: 0 auto 20px;
-    cursor: pointer;
-    filter: drop-shadow(0 5px 15px rgba(122, 92, 77, 0.1));
-}
-
-.cake-instruction {
-    font-family: 'EB Garamond', serif;
-    font-size: 0.95em;
-    color: var(--moss-green);
-    margin-bottom: 25px;
-    font-style: italic;
-    letter-spacing: 0.3px;
-}
-
-.reset-button {
-    background: linear-gradient(135deg, var(--sage-green) 0%, var(--moss-green) 100%);
-    color: var(--warm-ivory);
-    border: 1px solid var(--moss-green);
-    border-radius: 15px;
-    padding: 12px 35px;
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 1em;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    letter-spacing: 0.5px;
-    box-shadow: 0 4px 12px rgba(126, 143, 116, 0.2);
-}
-
-.reset-button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 18px rgba(126, 143, 116, 0.3);
-    background: linear-gradient(135deg, var(--moss-green) 0%, var(--sage-green) 100%);
-}
-
-.reset-button:active {
-    transform: translateY(0);
-}
-
-/* =====================
-   RECIPES SECTION
-   ===================== */
-.recipes-section {
-    margin-bottom: 80px;
-}
-
-.recipes-title {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 2.5em;
-    color: var(--antique-brown);
-    text-align: center;
-    margin-bottom: 60px;
-    font-weight: 400;
-    letter-spacing: 0.5px;
-}
-
-.recipes-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 40px;
-    margin-bottom: 40px;
-}
-
-/* =====================
-   RECIPE CARDS
-   ===================== */
-.recipe-card {
-    background: linear-gradient(135deg, var(--cream) 0%, var(--warm-ivory) 100%);
-    border: 1.5px solid var(--lavender-grey);
-    border-radius: 15px;
-    padding: 35px 30px;
-    box-shadow: 0 8px 25px rgba(122, 92, 77, 0.08);
-    transition: all 0.4s ease;
-    position: relative;
-    min-height: 350px;
+.page-content {
+    width: 100%;
+    height: 100%;
     display: flex;
     flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    overflow-y: auto; /* Gracefully handles overflow layout bugs */
 }
 
-.recipe-card:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 12px 35px rgba(122, 92, 77, 0.12);
-    border-color: var(--sage-green);
+/* =====================
+   INTERNAL PAGE ELEMENTS
+   ===================== */
+
+/* Cover / Greeting card adjustments */
+.greeting-card {
+    text-align: center;
+    width: 100%;
+}
+.greeting-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.8em;
+    color: var(--antique-brown);
+    margin-bottom: 10px;
+}
+.greeting-subtext {
+    font-family: 'Great Vibes', cursive;
+    font-size: 1.8em;
+    color: var(--dusty-rose);
+}
+.decorative-divider {
+    font-size: 1.2em;
+    color: var(--faded-gold);
+    margin-top: 15px;
 }
 
-.recipe-header {
-    position: relative;
-    margin-bottom: 25px;
-    padding-bottom: 15px;
-    border-bottom: 1px solid var(--faded-gold);
+/* Interactive Cake Viewport containment */
+.cake-container {
+    width: 100%;
+    text-align: center;
+}
+.cake-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.8em;
+    margin-bottom: 10px;
+}
+#cakeCanvas {
+    display: block;
+    margin: 0 auto;
+    max-width: 100%;
+    height: auto;
+    max-height: 360px;
+    cursor: pointer;
+}
+.cake-instruction {
+    font-size: 0.9em;
+    color: var(--moss-green);
+    margin: 10px 0;
+    font-style: italic;
 }
 
+/* Recipe layout standardizations */
+.recipes-main-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.8em;
+    margin-bottom: 20px;
+    text-align: center;
+}
+.recipes-vertical-stack {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+.recipe-card {
+    background: rgba(255, 255, 255, 0.4);
+    border: 1px solid var(--lavender-grey);
+    border-radius: 10px;
+    padding: 15px;
+    width: 100%;
+}
 .recipe-title {
     font-family: 'Cormorant Garamond', serif;
-    font-size: 1.4em;
+    font-size: 1.2em;
     color: var(--dusty-rose);
-    font-weight: 500;
-    letter-spacing: 0.3px;
-    margin: 0;
 }
-
+.recipe-placeholder {
+    font-size: 0.88em;
+    line-height: 1.5;
+    color: var(--moss-green);
+    margin-top: 5px;
+}
 .floral-corner {
-    position: absolute;
-    top: -5px;
-    right: -5px;
-    font-size: 1.8em;
+    float: right;
     opacity: 0.6;
 }
 
-.recipe-content {
-    flex-grow: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.recipe-placeholder {
-    font-family: 'EB Garamond', serif;
-    font-size: 0.95em;
-    color: var(--moss-green);
-    text-align: center;
-    line-height: 1.8;
-}
-
-.recipe-placeholder p {
-    margin: 0;
-}
-
-/* =====================
-   FOOTER
-   ===================== */
-.footer {
-    text-align: center;
-    padding: 40px 20px;
+/* Footer elements embedded within the final page */
+.book-footer {
+    margin-top: 20px;
+    font-size: 0.8em;
     color: var(--lavender-grey);
-    font-family: 'EB Garamond', serif;
-    font-size: 0.9em;
-    letter-spacing: 0.5px;
-    border-top: 1px solid rgba(168, 181, 154, 0.3);
-    margin-top: 60px;
+    text-align: center;
 }
 
 /* =====================
-   RESPONSIVE DESIGN
+   BOOK NAVIGATION LAYER
    ===================== */
-@media (max-width: 768px) {
-    .container {
-        padding: 40px 20px;
-    }
-
-    section {
-        margin-bottom: 50px;
-    }
-
-    .greeting-text {
-        font-size: 2.5em;
-    }
-
-    .greeting-subtext {
-        font-size: 1.5em;
-    }
-
-    .greeting-card {
-        padding: 40px 30px;
-    }
-
-    .cake-title {
-        font-size: 1.8em;
-    }
-
-    #cakeCanvas {
-        width: 100%;
-        max-width: 350px;
-        height: auto;
-    }
-
-    .recipes-title {
-        font-size: 2em;
-        margin-bottom: 40px;
-    }
-
-    .recipes-container {
-        grid-template-columns: 1fr;
-        gap: 30px;
-    }
-
-    .recipe-card {
-        min-height: 320px;
-        padding: 30px 25px;
-    }
-
-    .recipe-title {
-        font-size: 1.2em;
-    }
+.nav-layer {
+    position: absolute;
+    bottom: 15px;
+    left: 0;
+    width: 100%;
+    padding: 0 20px;
+    display: flex;
+    justify-content: space-between;
+}
+.nav-btn {
+    background: transparent;
+    border: none;
+    color: var(--moss-green);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1em;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 5px 10px;
+    transition: transform 0.2s ease;
+}
+.nav-btn:hover {
+    transform: scale(1.05);
+    color: var(--antique-brown);
+}
+.next-btn {
+    margin-left: auto; /* Forces right boundary matching single controls */
 }
 
-@media (max-width: 480px) {
-    .container {
-        padding: 30px 15px;
-    }
+/* Global elements standard button reset */
+.reset-button {
+    background: linear-gradient(135deg, var(--sage-green) 0%, var(--moss-green) 100%);
+    color: var(--warm-ivory);
+    border: none;
+    border-radius: 8px;
+    padding: 8px 20px;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.9em;
+    cursor: pointer;
+}
 
-    .greeting-text {
-        font-size: 2em;
-    }
-
-    .greeting-subtext {
-        font-size: 1.2em;
-    }
-
-    .greeting-card {
-        padding: 30px 20px;
-    }
-
-    .cake-container {
-        padding: 30px 20px;
-    }
-
-    .cake-title {
-        font-size: 1.5em;
-    }
-
-    #cakeCanvas {
-        width: 100%;
-        max-width: 300px;
-    }
-
-    .recipes-title {
-        font-size: 1.6em;
-    }
-
-    .recipe-card {
-        min-height: 300px;
-        padding: 25px 20px;
-    }
-
-    .recipe-title {
-        font-size: 1.1em;
-    }
-
-    .recipe-placeholder {
-        font-size: 0.85em;
-    }
+/* Responsive adjustments for smaller phone models */
+@media (max-width: 380px) {
+    .book { height: 95vh; }
+    .greeting-text { font-size: 2.2em; }
+    .recipe-placeholder { font-size: 0.8em; }
+    #cakeCanvas { max-height: 300px; }
 }
