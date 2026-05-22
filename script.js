@@ -444,7 +444,7 @@ async function setupMicrophone() {
             instructionText.style.opacity = 0;
             instructionText.style.transition = 'opacity 0.5s ease, color 0.5s ease';
             setTimeout(() => {
-                instructionText.innerText = "✨ Blow gently into your device to make a wish... ✨";
+                instructionText.innerText = "✨ Blow gently into your device to make a wish... ";
                 instructionText.style.color = colors.dustyRose;
                 instructionText.style.fontWeight = "600";
                 instructionText.style.opacity = 1;
