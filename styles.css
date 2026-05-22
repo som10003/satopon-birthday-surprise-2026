@@ -39,49 +39,17 @@ body {
     background: linear-gradient(180deg, rgba(246, 241, 231, 0.9) 0%, rgba(235, 207, 196, 0.4) 100%);
     z-index: -2;
 }
-}
-
-/* Background graphics layer */
-.background {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(180deg, rgba(246, 241, 231, 0.9) 0%, rgba(235, 207, 196, 0.1) 100%);
-    z-index: -2;
-}
-
-.floating-petals::before,
-.floating-petals::after {
-    content: '';
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    background-image: 
-        radial-gradient(2px 2px at 20% 30%, rgba(216, 167, 167, 0.1)),
-        radial-gradient(2px 2px at 60% 70%, rgba(184, 176, 201, 0.08)),
-        radial-gradient(1.5px 1.5px at 50% 50%, rgba(168, 181, 154, 0.1));
-    background-size: 200px 200px, 300px 300px, 250px 250px;
-    animation: drift 25s linear infinite;
-    z-index: -1;
-}
-@keyframes drift {
-    0% { transform: translateY(-100%); }
-    100% { transform: translateY(100%); }
-}
 
 /* =====================
    3D BOOK FRAMEWORK
    ===================== */
-
 .book-container {
     width: 100%;
     height: 100%;
     display: flex;
     justify-content: center;
-    align-items: flex-start; /* Aligns the book to the top of the screen */
-    padding: 40px 20px 20px 20px; /* Adds extra breathing room at the top */
+    align-items: center; /* PERFECTLY CENTERS THE BOOK ON THE SCREEN */
+    padding: 20px;
     perspective: 2000px;
 }
 
@@ -89,8 +57,8 @@ body {
     position: relative;
     width: 100%;
     max-width: 440px;
-    height: 75vh; /* Shortened from 90vh to stay well clear of iPhone bottom tabs */
-    max-height: 620px;
+    height: 80vh; /* Re-optimized to stay clear of iPhone navigation bars */
+    max-height: 650px;
     transform-style: preserve-3d;
 }
 
@@ -105,26 +73,27 @@ body {
     border: 2px solid var(--sage-green);
     border-radius: 12px;
     box-shadow: 0 12px 35px rgba(122, 92, 77, 0.12);
-    padding: 20px 15px 65px 15px; /* Slightly compact to prevent inner scrolling */
+    padding: 25px 20px 70px 20px;
     
     transform-origin: left center;
     transform-style: preserve-3d;
-    transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1); /* Faster, crisper flip */
+    transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
     backface-visibility: hidden;
     
-    /* FIXES THE BLANK/LAGGING BUG: Keeps text pre-rendered in background */
-    opacity: 1 !important; 
-    visibility: visible !important;
+    /* FIXES BLANK CARD BUG: Instantly pre-renders all text layers uniformly */
+    opacity: 0;
     pointer-events: none;
 }
 
-/* Active stage state machines */
+/* Active and flipped stage state machines */
 .page.active {
+    opacity: 1 !important;
     pointer-events: auto;
 }
 
 .page.flipped {
     transform: rotateY(-180deg);
+    opacity: 0 !important;
     pointer-events: none;
 }
 
@@ -133,47 +102,31 @@ body {
     height: 100%;
     display: flex;
     flex-direction: column;
-    justify-content: flex-start; /* Aligns content from top down to prevent overlaps */
+    justify-content: center; /* FIXES THE CENTERING BUG FOR TITLE & CAKE */
     align-items: center;
     
-    /* FIXES THE SCROLL BAR BUG: Completely removes the ugly white scrolling bar lines */
-    overflow-y: scroll; 
-    -ms-overflow-style: none;  /* IE and Edge */
+    /* HIDES THE SCROLL BAR OVERLAP LINE COMPLETELY */
+    overflow-y: scroll;
+    -ms-overflow-style: none;  /* IE/Edge */
     scrollbar-width: none;  /* Firefox */
 }
 .page-content::-webkit-scrollbar {
-    display: none; /* Chrome, Safari, and Opera */
+    display: none; /* Safari/Chrome */
 }
 
-/* Optimized Quote Layout for Mobile */
-.vintage-quote {
-    font-family: 'EB Garamond', serif;
-    font-style: italic;
-    font-size: 0.85em; /* Scaled down slightly to fit perfectly without causing scroll */
-    line-height: 1.35;
-    color: var(--antique-brown);
-    background: rgba(216, 167, 167, 0.05);
-    border-left: 2px solid var(--dusty-rose);
-    padding: 8px 12px;
-    margin: 0 0 10px 0;
-    border-radius: 0 8px 8px 0;
-    text-align: left;
-    width: 100%;
-}
 /* =====================
    INTERNAL PAGE ELEMENTS
    ===================== */
-
-/* Cover / Greeting card adjustments */
 .greeting-card {
     text-align: center;
     width: 100%;
 }
 .greeting-text {
     font-family: 'Cormorant Garamond', serif;
-    font-size: 2.8em;
+    font-size: 2.6em;
     color: var(--antique-brown);
     margin-bottom: 10px;
+    line-height: 1.2;
 }
 .greeting-subtext {
     font-family: 'Great Vibes', cursive;
@@ -194,51 +147,50 @@ body {
 .cake-title {
     font-family: 'Cormorant Garamond', serif;
     font-size: 1.8em;
-    margin-bottom: 10px;
+    margin-bottom: 5px;
 }
 #cakeCanvas {
     display: block;
     margin: 0 auto;
     max-width: 100%;
     height: auto;
-    max-height: 360px;
-    cursor: pointer;
+    max-height: 350px;
 }
 .cake-instruction {
     font-size: 0.9em;
     color: var(--moss-green);
-    margin: 10px 0;
+    margin: 8px 0;
     font-style: italic;
 }
 
 /* Recipe layout standardizations */
 .recipes-main-title {
     font-family: 'Cormorant Garamond', serif;
-    font-size: 1.8em;
-    margin-bottom: 20px;
+    font-size: 1.6em;
+    margin-bottom: 15px;
     text-align: center;
 }
 .recipes-vertical-stack {
     width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 12px;
 }
 .recipe-card {
     background: rgba(255, 255, 255, 0.4);
     border: 1px solid var(--lavender-grey);
     border-radius: 10px;
-    padding: 15px;
+    padding: 12px;
     width: 100%;
 }
 .recipe-title {
     font-family: 'Cormorant Garamond', serif;
-    font-size: 1.2em;
+    font-size: 1.1em;
     color: var(--dusty-rose);
 }
 .recipe-placeholder {
-    font-size: 0.88em;
-    line-height: 1.5;
+    font-size: 0.85em;
+    line-height: 1.4;
     color: var(--moss-green);
     margin-top: 5px;
 }
@@ -247,12 +199,22 @@ body {
     opacity: 0.6;
 }
 
-/* Footer elements embedded within the final page */
-.book-footer {
-    margin-top: 20px;
-    font-size: 0.8em;
-    color: var(--lavender-grey);
-    text-align: center;
+/* =====================
+   VINTAGE QUOTE STYLING
+   ===================== */
+.vintage-quote {
+    font-family: 'EB Garamond', serif;
+    font-style: italic;
+    font-size: 0.85em;
+    line-height: 1.35;
+    color: var(--antique-brown);
+    background: rgba(216, 167, 167, 0.05);
+    border-left: 2px solid var(--dusty-rose);
+    padding: 8px 12px;
+    margin: 0 0 12px 0;
+    border-radius: 0 8px 8px 0;
+    text-align: left;
+    width: 100%;
 }
 
 /* =====================
@@ -266,6 +228,7 @@ body {
     padding: 0 20px;
     display: flex;
     justify-content: space-between;
+    z-index: 10;
 }
 .nav-btn {
     background: transparent;
@@ -278,85 +241,26 @@ body {
     padding: 5px 10px;
     transition: transform 0.2s ease;
 }
-.nav-btn:hover {
-    transform: scale(1.05);
-    color: var(--antique-brown);
-}
 .next-btn {
-    margin-left: auto; /* Forces right boundary matching single controls */
+    margin-left: auto;
 }
-
-/* Global elements standard button reset */
 .reset-button {
     background: linear-gradient(135deg, var(--sage-green) 0%, var(--moss-green) 100%);
     color: var(--warm-ivory);
     border: none;
     border-radius: 8px;
-    padding: 8px 20px;
+    padding: 6px 16px;
     font-family: 'Cormorant Garamond', serif;
-    font-size: 0.9em;
+    font-size: 0.85em;
     cursor: pointer;
+    margin-top: 4px;
 }
 
 /* Responsive adjustments for smaller phone models */
 @media (max-width: 380px) {
-    .book { height: 95vh; }
-    .greeting-text { font-size: 2.2em; }
-    .recipe-placeholder { font-size: 0.8em; }
-    #cakeCanvas { max-height: 300px; }
-}
-/* =====================
-   VINTAGE QUOTE STYLING
-   ===================== */
-.vintage-quote {
-    font-family: 'EB Garamond', serif;
-    font-style: italic;
-    font-size: 0.9em;
-    line-height: 1.4;
-    color: var(--antique-brown);
-    background: rgba(216, 167, 167, 0.07); /* Extremely soft dusty rose tint */
-    border-left: 2px solid var(--dusty-rose);
-    padding: 10px 15px;
-    margin: 0 0 15px 0;
-    border-radius: 0 8px 8px 0;
-    text-align: left;
-    position: relative;
-}
-
-/* Subtle adjustment to keep layout tightly grouped on tiny phone screens */
-@media (max-width: 380px) {
-    .vintage-quote {
-        font-size: 0.82em;
-        padding: 8px 12px;
-        margin-bottom: 10px;
-    }
-  /* ==========================================
-   PAGE 1 (COVER) VINTAGE ROSE BACKGROUND FRAME
-   ========================================== */
-#page-1 {
-    position: relative;
-    background-color: var(--warm-ivory);
-    /* Blends the roses vividly into the background */
-    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 120 120"><g fill="none" stroke-width="1"><path d="M20,40 Q30,25 40,40 T60,40" stroke="%23A8B59A" stroke-dasharray="2,2"/><circle cx="25" cy="35" r="5" fill="%23D8A7A7" opacity="0.7"/><circle cx="28" cy="32" r="4" fill="%23EBCFC4" opacity="0.9"/><circle cx="45" cy="38" r="4" fill="%23D8A7A7" opacity="0.7"/><path d="M22,38 L16,42 M47,40 L52,44" stroke="%237E8F74"/><path d="M80,80 Q90,65 100,80 T120,80" stroke="%23A8B59A" stroke-dasharray="2,2"/><circle cx="85" cy="75" r="5" fill="%23D8A7A7" opacity="0.7"/><circle cx="88" cy="72" r="4" fill="%23EBCFC4" opacity="0.9"/><path d="M82,78 L76,82" stroke="%237E8F74"/></g></svg>');
-    background-size: 120px 120px;
-}
-
-#page-1 .page-content {
-    background: transparent; /* Allows roses to pass through */
-    width: 100%;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-#page-1 .greeting-card {
-    background: rgba(253, 248, 242, 0.95); /* Crisp background shield */
-    padding: 40px 25px;
-    border-radius: 12px;
-    border: 1px double rgba(200, 182, 138, 0.6); /* Gold frame */
-    box-shadow: 0 10px 30px rgba(122, 92, 77, 0.1);
-    z-index: 2;
-    width: 85%;
-    text-align: center;
+    .book { height: 82vh; }
+    .greeting-text { font-size: 2.1em; }
+    .recipe-placeholder { font-size: 0.78em; }
+    #cakeCanvas { max-height: 290px; }
+    .vintage-quote { font-size: 0.8em; }
 }
