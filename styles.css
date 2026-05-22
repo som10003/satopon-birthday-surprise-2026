@@ -307,4 +307,26 @@ body {
         padding: 8px 12px;
         margin-bottom: 10px;
     }
+   /* ==========================================
+   PAGE 1 (COVER) VINTAGE ROSE BACKGROUND FRAME
+   ========================================== */
+#page-1 {
+    position: relative;
+    /* Draws a beautiful, repeating pattern of delicate pink roses and sage leaves around the edges */
+    background-image: 
+        linear-gradient(135deg, rgba(253, 248, 242, 0.85) 0%, rgba(246, 241, 231, 0.85) 100%),
+        url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 120 120"><g fill="none" stroke-width="1"><path d="M20,40 Q30,25 40,40 T60,40" stroke="%23A8B59A" stroke-dasharray="2,2"/><circle cx="25" cy="35" r="5" fill="%23D8A7A7" opacity="0.7"/><circle cx="28" cy="32" r="4" fill="%23EBCFC4" opacity="0.9"/><circle cx="45" cy="38" r="4" fill="%23D8A7A7" opacity="0.7"/><path d="M22,38 L16,42 M47,40 L52,44" stroke="%237E8F74"/><path d="M80,80 Q90,65 100,80 T120,80" stroke="%23A8B59A" stroke-dasharray="2,2"/><circle cx="85" cy="75" r="5" fill="%23D8A7A7" opacity="0.7"/><circle cx="88" cy="72" r="4" fill="%23EBCFC4" opacity="0.9"/><path d="M82,78 L76,82" stroke="%237E8F74"/></g></svg>');
+    background-size: auto, 120px 120px;
+}
+
+#page-1 .greeting-card {
+    background: rgba(253, 248, 242, 0.92); /* Soft ivory shield behind text */
+    padding: 30px 20px;
+    border-radius: 50%; /* Forms an elegant oval look over the center */
+    border: 1px double rgba(200, 182, 138, 0.4); /* Faded gold delicate inner trim */
+    box-shadow: 0 10px 30px rgba(122, 92, 77, 0.05);
+    z-index: 2;
+    width: 90%;
+    max-width: 360px;
+}
 }
