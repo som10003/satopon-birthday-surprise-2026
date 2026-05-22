@@ -419,3 +419,77 @@ document.head.appendChild(style);
 // Initialize and start
 initializeCandles();
 draw();
+
+// =====================
+// MICROPHONE INTERACTION
+// =====================
+let audioContext;
+let analyser;
+let microphone;
+
+async function setupMicrophone() {
+    try {
+        // 1. Ask for permission
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        analyser = audioContext.createAnalyser();
+        microphone = audioContext.createMediaStreamSource(stream);
+        microphone.connect(analyser);
+        analyser.fftSize = 256;
+        
+        // 2. Change the instruction text on screen so she knows it worked!
+        const instructionText = document.querySelector('.cake-instruction');
+        if (instructionText) {
+            // Fade out, change text, fade back in
+            instructionText.style.opacity = 0;
+            instructionText.style.transition = 'opacity 0.5s ease, color 0.5s ease';
+            setTimeout(() => {
+                instructionText.innerText = "✨ Blow gently into your device to make a wish... ✨";
+                instructionText.style.color = colors.dustyRose;
+                instructionText.style.fontWeight = "600";
+                instructionText.style.opacity = 1;
+            }, 300);
+        }
+
+        // 3. Start listening
+        checkAudioLevel();
+    } catch (err) {
+        console.log("Microphone access denied. She can still tap the candles.", err);
+    }
+}
+
+function checkAudioLevel() {
+    if (allBlown) return;
+
+    const bufferLength = analyser.frequencyBinCount;
+    const dataArray = new Uint8Array(bufferLength);
+    analyser.getByteFrequencyData(dataArray);
+
+    let sum = 0;
+    for (let i = 0; i < bufferLength; i++) {
+        sum += dataArray[i];
+    }
+    let average = sum / bufferLength;
+
+    // If the sound volume crosses the blowing threshold
+    if (average > 45) { 
+        let litCandles = candles.filter(c => c.lit);
+        if (litCandles.length > 0) {
+            // Blow out a random candle to make it feel like natural air flow
+            const randomCandle = litCandles[Math.floor(Math.random() * litCandles.length)];
+            randomCandle.blow();
+        }
+    }
+    
+    // Keep checking the audio
+    requestAnimationFrame(checkAudioLevel);
+}
+
+// Browsers require a user gesture to start listening. 
+// We attach it to the canvas clicks/touches.
+canvas.addEventListener('click', () => {
+    if (!audioContext) setupMicrophone();
+});
+canvas.addEventListener('touchstart', () => {
+    if (!audioContext) setupMicrophone();
+}, { passive: true });
