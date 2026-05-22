@@ -282,3 +282,29 @@ body {
     .recipe-placeholder { font-size: 0.8em; }
     #cakeCanvas { max-height: 300px; }
 }
+/* =====================
+   VINTAGE QUOTE STYLING
+   ===================== */
+.vintage-quote {
+    font-family: 'EB Garamond', serif;
+    font-style: italic;
+    font-size: 0.9em;
+    line-height: 1.4;
+    color: var(--antique-brown);
+    background: rgba(216, 167, 167, 0.07); /* Extremely soft dusty rose tint */
+    border-left: 2px solid var(--dusty-rose);
+    padding: 10px 15px;
+    margin: 0 0 15px 0;
+    border-radius: 0 8px 8px 0;
+    text-align: left;
+    position: relative;
+}
+
+/* Subtle adjustment to keep layout tightly grouped on tiny phone screens */
+@media (max-width: 380px) {
+    .vintage-quote {
+        font-size: 0.82em;
+        padding: 8px 12px;
+        margin-bottom: 10px;
+    }
+}
